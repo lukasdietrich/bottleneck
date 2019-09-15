@@ -2,6 +2,7 @@ package bottleneck
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/dimfeld/httptreemux/v5"
 )
@@ -189,11 +190,12 @@ func (g *Group) OPTIONS(path string, handler Handler, middleware ...Middleware) 
 	return g.Add(http.MethodOptions, path, handler, middleware...)
 }
 
-func (g *Group) Files(path string, opts FileHandlerOptions) *Group {
+// Static adds a Handler for static files using http.ServeContent.
+func (g *Group) Static(path string, opts FileHandlerOptions) *Group {
 	handler := newFileHandler(opts)
 
 	g.GET(path, handler)
-	g.GET(path+"/*filepath", handler)
+	g.GET(strings.TrimSuffix(path, "/")+"/*filepath", handler)
 
 	return g
 }
