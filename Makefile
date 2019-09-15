@@ -15,7 +15,7 @@ test:
 	go-junit-report < reports/test.log > reports/junit.xml
 	gocov convert reports/coverage.out > reports/coverage.json
 	gocov-xml < reports/coverage.json > reports/coverage.xml
-	gocov-html < reports/coverage.json > reports/coverage.html
+	gocov-html < reports/coverage.json > reports/index.html
 
 lint:
 	golint
