@@ -8,7 +8,7 @@ variables:
   # GOBIN:  '$(GOPATH)/bin' # Go binaries path
   # GOROOT: '/usr/local/go1.13' # Go installation path
   # GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-  modulePath: '$(system.defaultWorkingDirectory)/$(build.repository.name)' # Path to the module's code
+  modulePath: '$(system.defaultWorkingDirectory)' # Path to the module's code
 
 steps:
 - task: GoTool@0
