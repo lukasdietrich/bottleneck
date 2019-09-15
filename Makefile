@@ -1,4 +1,4 @@
-.PHONY: all test lint
+.PHONY: all install-tools test lint
 
 all: test lint
 
