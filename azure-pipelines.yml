@@ -39,4 +39,3 @@ steps:
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '$(modulePath)/**/coverage.xml'
-    reportDirectory: '$(modulePath)/**/reports'
