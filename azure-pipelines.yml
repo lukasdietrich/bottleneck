@@ -1,0 +1,41 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  GOPATH: '$(system.defaultWorkingDirectory)/gopath'
+  GOBIN:  '$(GOPATH)/bin'
+  modulePath: '$(system.defaultWorkingDirectory)/$(build.repository.name)'
+
+steps:
+- task: GoTool@0
+  inputs:
+    version: '1.13'
+
+- script: |
+    shopt -s extglob
+    shopt -s dotglob
+    mkdir -p '$(modulePath)'
+    mv !(gopath) '$(modulePath)'
+    echo '##vso[task.prependpath]$(GOBIN)'
+  displayName: 'Set up the Go workspace'
+
+- script: |
+    make install-tools
+    go get -v -t -d ./...
+    make test
+  workingDirectory: '$(modulePath)'
+  displayName: 'Get dependencies, then test'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/junit.xml'
+    failTaskOnFailedTests: true
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(modulePath)/**/coverage.xml'
