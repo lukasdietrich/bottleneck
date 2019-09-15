@@ -38,4 +38,5 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(system.defaultWorkingDirectory)/**/coverage.xml'
+    summaryFileLocation: '$(modulePath)/**/coverage.xml'
+    reportDirectory: '$(modulePath)/**/reports'
