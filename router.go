@@ -188,3 +188,12 @@ func (g *Group) HEAD(path string, handler Handler, middleware ...Middleware) *Gr
 func (g *Group) OPTIONS(path string, handler Handler, middleware ...Middleware) *Group {
 	return g.Add(http.MethodOptions, path, handler, middleware...)
 }
+
+func (g *Group) Files(path string, opts FileHandlerOptions) *Group {
+	handler := newFileHandler(opts)
+
+	g.GET(path, handler)
+	g.GET(path+"/*filepath", handler)
+
+	return g
+}
