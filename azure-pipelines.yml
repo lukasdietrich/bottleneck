@@ -5,10 +5,9 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  # GOBIN:  '$(GOPATH)/bin' # Go binaries path
-  # GOROOT: '/usr/local/go1.13' # Go installation path
-  # GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-  modulePath: '$(system.defaultWorkingDirectory)/$(build.repository.name)' # Path to the module's code
+  GOPATH: '$(system.defaultWorkingDirectory)/gopath'
+  GOBIN:  '$(GOPATH)/bin'
+  modulePath: '$(system.defaultWorkingDirectory)/$(build.repository.name)'
 
 steps:
 - task: GoTool@0
@@ -19,6 +18,8 @@ steps:
     shopt -s extglob
     shopt -s dotglob
     mkdir -p '$(modulePath)'
+    mv !(gopath) '$(modulePath)'
+    echo '##vso[task.prependpath]$(GOBIN)'
   displayName: 'Set up the Go workspace'
 
 - script: |
