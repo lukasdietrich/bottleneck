@@ -10,7 +10,8 @@ clean:
 	rm -f *.html *.xml *.txt *.log
 
 test:
-	go test -v -race -coverprofile=coverage.txt -covermode=atomic | tee /dev/stderr | go-junit-report > junit.xml
+	go test -v -race -coverprofile=coverage.txt -covermode=atomic | tee test.log
+	go-junit-report < test.log > junit.xml
 
 lint:
 	golint
