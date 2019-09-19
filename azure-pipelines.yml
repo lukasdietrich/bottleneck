@@ -23,11 +23,20 @@ steps:
   displayName: 'Set up the Go workspace'
 
 - script: |
-    make install-tools
+    make clean install-tools
     go get -v -t -d ./...
+  workingDirectory: '$(modulePath)'
+  displayName: 'Get dependencies'
+
+- script: |
     make test
   workingDirectory: '$(modulePath)'
-  displayName: 'Get dependencies, then test'
+  displayName: 'Run tests'
+
+- script: |
+    make lint
+  workingDirectory: '$(modulePath)'
+  displayName: 'Run linter'
 
 - task: PublishTestResults@2
   inputs:
@@ -35,7 +44,7 @@ steps:
     testResultsFiles: '**/junit.xml'
     failTaskOnFailedTests: true
 
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(modulePath)/**/coverage.xml'
+- task: |
+    bash <(curl -s https://codecov.io/bash)
+  workingDirectory: '$(modulePath)'
+  displayName: 'Upload test coverage'
