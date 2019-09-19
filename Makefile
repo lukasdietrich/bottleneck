@@ -1,19 +1,17 @@
 .PHONY: all install-tools test lint
 
-all: test lint
+all: clean test lint
 
 install-tools:
 	go get -u golang.org/x/lint/golint
 	go get -u github.com/jstemmer/go-junit-report
-	go get -u github.com/axw/gocov/gocov
-	go get -u github.com/AlekSi/gocov-xml
+
+clean:
+	rm -f *.html *.xml *.txt *.log
 
 test:
-	mkdir -p reports
-	go test -v -coverprofile=reports/coverage.out -covermode=count > reports/test.log
-	go-junit-report < reports/test.log > reports/junit.xml
-	gocov convert reports/coverage.out > reports/coverage.json
-	gocov-xml < reports/coverage.json > reports/coverage.xml
+	go test -v -race -coverprofile=coverage.txt -covermode=atomic | tee test.log
+	go-junit-report < test.log > junit.xml
 
 lint:
 	golint
