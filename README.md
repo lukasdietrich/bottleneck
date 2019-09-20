@@ -64,57 +64,57 @@ handlers.
 package main
 
 import (
-    "http"
+	"net/http"
 
-    "github.com/lukasdietrich/bottleneck"
+	"github.com/lukasdietrich/bottleneck"
 )
 
 // Context is a custom context
 type Context struct {
-    bottleneck.Context // It must embeds bottleneck.Context to be valid
-    User string        // Store user during request handling
+	bottleneck.Context        // It must embeds bottleneck.Context to be valid
+	User               string // Store user during request handling
 }
 
 // AmIRequest is a request definition
 type AmIRequest struct {
-    Name string `json:"name" validate:"required"`
+	Name string `json:"name" validate:"required"`
 }
 
 // AmIResponse is a response definition
 type AmIResponse struct {
-    Yes bool `json:"yes"`
+	Yes bool `json:"yes"`
 }
 
 func main() {
-    r := bottleneck.NewRouter() // Create a new router
-    r.Mount(routes()) // Mount the routes
+	r := bottleneck.NewRouter(Context{}) // Create a new router
+	r.Mount(routes())                    // Mount the routes
 
-    // Start a http server and use the router
-    http.ListenAndServe(":8080", r)
+	// Start a http server and use the router
+	http.ListenAndServe(":8080", r)
 }
 
 // routes creates a group with all /api routes.
-func routes() *bottlneck.Group {
-    g := bottleneck.NewGroup().WithPrefix("/api")
-    
-    // store the current user for handlers
-    g.Use(func (ctx *Context) error {
-        user, _, ok := ctx.Request().BasicAuth()
-        if !ok {
-            return bottleneck.NewError(http.StatusUnauthorized)
-        }
+func routes() *bottleneck.Group {
+	g := bottleneck.NewGroup().WithPrefix("/api")
 
-        ctx.User = user
-        return nil
-    })
+	// store the current user for handlers
+	g.Use(func(ctx *Context, next bottleneck.Next) error {
+		user, _, ok := ctx.Request().BasicAuth()
+		if !ok {
+			return bottleneck.NewError(http.StatusUnauthorized)
+		}
 
-    // test if the user knows his own name
-    g.POST(func (ctx *Context, req *AmIRequest) error {
-        return ctx.JSON(http.StatusOk, AmIResponse{
-            Yes: req.Name == ctx.User,
-        })
-    })
-    
-    return g
+		ctx.User = user
+		return next()
+	})
+
+	// test if the user knows his own name
+	g.POST("/test", func(ctx *Context, req *AmIRequest) error {
+		return ctx.JSON(http.StatusOK, AmIResponse{
+			Yes: req.Name == ctx.User,
+		})
+	})
+
+	return g
 }
 ```
