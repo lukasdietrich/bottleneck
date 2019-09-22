@@ -32,7 +32,7 @@ That starts to become annoying when you do a lot of `if err != nil { return err 
 and maybe want to handle errors at a centralized place, for example through middleware.
 
 Echo is the first framework I came across that returns an error in every handler and
-middleware which made it much more pleasent for me to write services.
+middleware which made it much more pleasant for me to write services.
 
 ### Mounting subgroups from [go-chi/chi](https://github.com/go-chi/chi)
 
@@ -41,7 +41,7 @@ Many routers support grouping of routes, but most of them require them to be
 a lot harder / less modular. Chi allows groups to be created separately and then be
 mounted onto a router later.
 
-### Bring your own Context from [gocraft/web](https://github.com/gocraft/web)
+### Bring your own context from [gocraft/web](https://github.com/gocraft/web)
 
 A common pattern for web services is to do some work or checks before a group of routes.
 This can be achieved with middleware in many of the existing routers, but storing
@@ -55,8 +55,8 @@ Handling a request is (almost) always the same. Unmarshal and possibly validate 
 Do some work. Marshal a response. Done.
 
 Marshalling a response can be hidden behind the context, but unmarshalling and validating
-the request always requires some boilerplate at the start of each handler. I want Bottleneck to do that automatically and provide the resulting value as a parameter to
-handlers.
+the request always requires some boilerplate at the start of each handler. I want Bottleneck
+to do that automatically and provide the resulting value as a parameter to handlers.
 
 ## Example
 
@@ -71,7 +71,7 @@ import (
 
 // Context is a custom context
 type Context struct {
-	bottleneck.Context        // It must embeds bottleneck.Context to be valid
+	bottleneck.Context        // It must embed bottleneck.Context to be valid
 	User               string // Store user during request handling
 }
 
@@ -118,3 +118,11 @@ func routes() *bottleneck.Group {
 	return g
 }
 ```
+
+## Credits
+
+Bottleneck utilizes some great packages under the hood:
+
+1. [dimfeld/httptreemux](https://github.com/dimfeld/httptreemux) for request routing
+2. [go-playground/validator](https://github.com/go-playground/validator) for the default
+   validation implemenation
