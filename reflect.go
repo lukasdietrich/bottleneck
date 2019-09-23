@@ -159,11 +159,11 @@ func wrapHandler(router *Router, handler Handler) wrappedHandler {
 			)
 
 			if err := router.Binder.Bind(req, payloadInterface); err != nil {
-				return err
+				return toBadRequestError(err)
 			}
 
 			if err := router.Validator.Validate(req, payloadInterface); err != nil {
-				return err
+				return toBadRequestError(err)
 			}
 
 			input = append(input, payloadValue)
@@ -175,6 +175,14 @@ func wrapHandler(router *Router, handler Handler) wrappedHandler {
 
 		return nil
 	}
+}
+
+func toBadRequestError(err error) error {
+	if _, ok := err.(*Error); ok {
+		return err
+	}
+
+	return NewError(http.StatusBadRequest).WithCause(err)
 }
 
 type wrappedMiddleware func(*contextHolder, Next) error
