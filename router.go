@@ -190,8 +190,8 @@ func (g *Group) OPTIONS(path string, handler Handler, middleware ...Middleware) 
 	return g.Add(http.MethodOptions, path, handler, middleware...)
 }
 
-// Static adds a Handler for static files using http.ServeContent.
-func (g *Group) Static(path string, opts FileHandlerOptions) *Group {
+// Files adds a Handler for static files using http.ServeContent.
+func (g *Group) Files(path string, opts FileHandlerOptions) *Group {
 	handler := newFileHandler(opts)
 
 	g.GET(path, handler)

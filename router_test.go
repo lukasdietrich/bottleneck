@@ -81,10 +81,10 @@ func TestRouterServeWithMiddleware(t *testing.T) {
 	router.ServeHTTP(res, req)
 
 	buf := bytes.NewBuffer(nil)
-	buf.ReadFrom(res.Result().Body)
+	buf.ReadFrom(res.Result().Body) // nolint:errcheck
 
 	assert.Equal(t, 200, res.Code)
-	assert.Equal(t, MIMEApplicationJSONCharsetUTF8, res.HeaderMap.Get(HeaderContentType))
+	assert.Equal(t, MIMEApplicationJSONCharsetUTF8, res.Header().Get(HeaderContentType))
 	assert.Equal(t, `{"Method":"POST","ID":"42","Payload":"Jake"}`, buf.String())
 }
 
@@ -107,10 +107,10 @@ func TestRouterServeGenericError(t *testing.T) {
 	router.ServeHTTP(res, req)
 
 	buf := bytes.NewBuffer(nil)
-	buf.ReadFrom(res.Result().Body)
+	buf.ReadFrom(res.Result().Body) // nolint:errcheck
 
 	assert.Equal(t, 500, res.Code)
-	assert.Equal(t, MIMEApplicationJSONCharsetUTF8, res.HeaderMap.Get(HeaderContentType))
+	assert.Equal(t, MIMEApplicationJSONCharsetUTF8, res.Header().Get(HeaderContentType))
 	assert.Equal(t, `{"status":500,"message":"Internal Server Error"}`, buf.String())
 }
 
@@ -133,9 +133,9 @@ func TestRouterServeBottleneckError(t *testing.T) {
 	router.ServeHTTP(res, req)
 
 	buf := bytes.NewBuffer(nil)
-	buf.ReadFrom(res.Result().Body)
+	buf.ReadFrom(res.Result().Body) // nolint:errcheck
 
 	assert.Equal(t, 411, res.Code)
-	assert.Equal(t, MIMEApplicationJSONCharsetUTF8, res.HeaderMap.Get(HeaderContentType))
+	assert.Equal(t, MIMEApplicationJSONCharsetUTF8, res.Header().Get(HeaderContentType))
 	assert.Equal(t, `{"status":411,"message":"Custom Error Message"}`, buf.String())
 }

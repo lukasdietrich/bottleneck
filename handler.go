@@ -41,6 +41,8 @@ func makeChain(middleware []wrappedMiddleware, handler wrappedHandler) wrappedHa
 
 func handleError(ctx *Context, err error) {
 	if err, ok := err.(*Error); ok {
+		// Ignore error here because it is just the last attempt to display it to the client.
+		// nolint:errcheck
 		ctx.JSON(err.Status, err)
 	} else {
 		handleError(ctx, NewError(http.StatusInternalServerError).WithCause(err))
