@@ -79,9 +79,7 @@ func (c *contextCreator) create(res http.ResponseWriter, req *http.Request, para
 		baseContext  = contextValue.Elem().FieldByName("Context").Addr().Interface().(*Context)
 	)
 
-	baseContext.request = req
-	baseContext.response = res
-	baseContext.params = params
+	baseContext.init(res, req, params)
 
 	return &contextHolder{
 		contextType:      c.contextPtrType,

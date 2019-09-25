@@ -5,12 +5,39 @@ import (
 	"net/http"
 )
 
+type Response struct {
+	Status int
+	Writer http.ResponseWriter
+}
+
+func (r *Response) Header() http.Header {
+	return r.Writer.Header()
+}
+
+func (r *Response) Write(b []byte) (int, error) {
+	return r.Writer.Write(b)
+}
+
+func (r *Response) WriteHeader(status int) {
+	r.Status = status
+	r.Writer.WriteHeader(status)
+}
+
 // Context is the base for custom contexts. It is a container for the raw http request and response and provides
 // convenience methods to access request-data and to write responses.
 type Context struct {
 	request  *http.Request
-	response http.ResponseWriter
+	response *Response
 	params   map[string]string
+}
+
+func (c *Context) init(res http.ResponseWriter, req *http.Request, params map[string]string) {
+	c.response = &Response{
+		Writer: res,
+		Status: http.StatusOK,
+	}
+	c.request = req
+	c.params = params
 }
 
 // Request returns the raw http request.
@@ -19,7 +46,7 @@ func (c *Context) Request() *http.Request {
 }
 
 // Response returns the raw http response.
-func (c *Context) Response() http.ResponseWriter {
+func (c *Context) Response() *Response {
 	return c.response
 }
 
