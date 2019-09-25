@@ -3,8 +3,10 @@
 all: clean test lint
 
 install-tools:
-	go get -u golang.org/x/lint/golint
-	go get -u github.com/jstemmer/go-junit-report
+	GO111MODULE=on go get \
+		github.com/golangci/golangci-lint/cmd/golangci-lint@v1.19.1 \
+		github.com/jstemmer/go-junit-report
+	go mod tidy
 
 clean:
 	rm -f *.html *.xml *.txt *.log
@@ -14,4 +16,4 @@ test:
 	go-junit-report < test.log > junit.xml
 
 lint:
-	golint
+	golangci-lint run
