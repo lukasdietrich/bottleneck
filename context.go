@@ -5,19 +5,32 @@ import (
 	"net/http"
 )
 
+// Response wraps a raw http.ResponseWriter and stores additional information, which is not tracked
+// by the standard library.
 type Response struct {
+	// Status is the http status code that is set during WriteHeader.
 	Status int
+	// Writer is the raw http.ResponseWriter. It can be set in a middleware to change the way data is written.
 	Writer http.ResponseWriter
 }
 
+// Header returns the header map that will be sent by WriteHeader.
+//
+// See https://golang.org/pkg/net/http/#ResponseWriter
 func (r *Response) Header() http.Header {
 	return r.Writer.Header()
 }
 
+// Write writes the data to the connection as part of an HTTP reply.
+//
+// See https://golang.org/pkg/net/http/#ResponseWriter
 func (r *Response) Write(b []byte) (int, error) {
 	return r.Writer.Write(b)
 }
 
+// WriteHeader sends an HTTP response header with the provided status code.
+//
+// See https://golang.org/pkg/net/http/#ResponseWriter
 func (r *Response) WriteHeader(status int) {
 	r.Status = status
 	r.Writer.WriteHeader(status)
