@@ -12,7 +12,7 @@ clean:
 	rm -f *.html *.xml *.txt *.log
 
 test:
-	go test -v -race -coverprofile=coverage.txt -covermode=atomic | tee test.log
+	go test -v -race -coverprofile=coverage.txt -covermode=atomic ./... | tee test.log
 	go-junit-report < test.log > junit.xml
 
 lint:

@@ -20,7 +20,7 @@ func Logger() StandardMiddleware {
 			err     = next()
 			res     = ctx.Response()
 			req     = ctx.Request()
-			latency = time.Now().Sub(t0)
+			latency = time.Since(t0)
 			status  = res.Status
 
 			bErr *bottleneck.Error
