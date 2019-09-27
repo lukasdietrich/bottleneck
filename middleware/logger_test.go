@@ -39,9 +39,9 @@ func TestLogger(t *testing.T) {
 	router.Mount(group)
 
 	for pattern, request := range map[string]*http.Request{
-		`\| 200 \| \s*\d+\.\d+.?s \| DELETE /`:        httptest.NewRequest(http.MethodDelete, "/", nil),
-		`\| 500 \| \s*\d+\.\d+.?s \| \s*PUT /err-500`: httptest.NewRequest(http.MethodPut, "/err-500", nil),
-		`\| 400 \| \s*\d+\.\d+.?s \| \s*GET /err-400`: httptest.NewRequest(http.MethodGet, "/err-400", nil),
+		`\| 200 \| \s*\d+(\.\d+)?.?s \| DELETE /`:        httptest.NewRequest(http.MethodDelete, "/", nil),
+		`\| 500 \| \s*\d+(\.\d+)?.?s \| \s*PUT /err-500`: httptest.NewRequest(http.MethodPut, "/err-500", nil),
+		`\| 400 \| \s*\d+(\.\d+)?.?s \| \s*GET /err-400`: httptest.NewRequest(http.MethodGet, "/err-400", nil),
 	} {
 		buf.Reset()
 		router.ServeHTTP(httptest.NewRecorder(), request)
