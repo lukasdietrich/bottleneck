@@ -5,12 +5,52 @@ import (
 	"net/http"
 )
 
+// Response wraps a raw http.ResponseWriter and stores additional information, which is not tracked
+// by the standard library.
+type Response struct {
+	// Status is the http status code that is set during WriteHeader.
+	Status int
+	// Writer is the raw http.ResponseWriter. It can be set in a middleware to change the way data is written.
+	Writer http.ResponseWriter
+}
+
+// Header returns the header map that will be sent by WriteHeader.
+//
+// See https://golang.org/pkg/net/http/#ResponseWriter
+func (r *Response) Header() http.Header {
+	return r.Writer.Header()
+}
+
+// Write writes the data to the connection as part of an HTTP reply.
+//
+// See https://golang.org/pkg/net/http/#ResponseWriter
+func (r *Response) Write(b []byte) (int, error) {
+	return r.Writer.Write(b)
+}
+
+// WriteHeader sends an HTTP response header with the provided status code.
+//
+// See https://golang.org/pkg/net/http/#ResponseWriter
+func (r *Response) WriteHeader(status int) {
+	r.Status = status
+	r.Writer.WriteHeader(status)
+}
+
 // Context is the base for custom contexts. It is a container for the raw http request and response and provides
 // convenience methods to access request-data and to write responses.
 type Context struct {
 	request  *http.Request
-	response http.ResponseWriter
+	response *Response
 	params   map[string]string
+}
+
+func (c *Context) init(res http.ResponseWriter, req *http.Request, params map[string]string) {
+	c.response = &Response{
+		Writer: res,
+		Status: http.StatusOK,
+	}
+	c.request = req
+	c.params = params
 }
 
 // Request returns the raw http request.
@@ -19,7 +59,7 @@ func (c *Context) Request() *http.Request {
 }
 
 // Response returns the raw http response.
-func (c *Context) Response() http.ResponseWriter {
+func (c *Context) Response() *Response {
 	return c.response
 }
 

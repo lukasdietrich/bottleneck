@@ -11,10 +11,8 @@ import (
 )
 
 func TestContextRaw(t *testing.T) {
-	ctx := Context{
-		request:  httptest.NewRequest(http.MethodGet, "/", nil),
-		response: httptest.NewRecorder(),
-	}
+	var ctx Context
+	ctx.init(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/", nil), nil)
 
 	assert.Equal(t, ctx.request, ctx.Request())
 	assert.Equal(t, ctx.response, ctx.Response())
@@ -42,11 +40,11 @@ func TestContextQuery(t *testing.T) {
 
 func TestContextRenderString(t *testing.T) {
 	var (
+		ctx      Context
 		recorder = httptest.NewRecorder()
-		ctx      = Context{
-			response: recorder,
-		}
 	)
+
+	ctx.init(recorder, nil, nil)
 
 	assert.Nil(t, ctx.String(http.StatusTeapot, "Hello World"))
 
@@ -58,11 +56,11 @@ func TestContextRenderString(t *testing.T) {
 
 func TestContextRenderJSON(t *testing.T) {
 	var (
+		ctx      Context
 		recorder = httptest.NewRecorder()
-		ctx      = Context{
-			response: recorder,
-		}
 	)
+
+	ctx.init(recorder, nil, nil)
 
 	assert.Nil(t, ctx.JSON(http.StatusTeapot, bindTestStruct{
 		Name: "Joe",
@@ -78,11 +76,11 @@ func TestContextRenderJSON(t *testing.T) {
 
 func TestContextRenderXML(t *testing.T) {
 	var (
+		ctx      Context
 		recorder = httptest.NewRecorder()
-		ctx      = Context{
-			response: recorder,
-		}
 	)
+
+	ctx.init(recorder, nil, nil)
 
 	assert.Nil(t, ctx.XML(http.StatusUpgradeRequired, bindTestStruct{
 		Name: "Jake",
@@ -97,10 +95,12 @@ func TestContextRenderXML(t *testing.T) {
 }
 
 func TestContextRenderStream(t *testing.T) {
-	recorder := httptest.NewRecorder()
-	ctx := Context{
-		response: recorder,
-	}
+	var (
+		ctx      Context
+		recorder = httptest.NewRecorder()
+	)
+
+	ctx.init(recorder, nil, nil)
 
 	assert.Nil(t, ctx.Stream(http.StatusTooManyRequests, MIMEOctetStream, strings.NewReader("Hello World")))
 

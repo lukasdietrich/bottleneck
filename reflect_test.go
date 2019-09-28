@@ -51,7 +51,7 @@ func TestContextCreatorCreate(t *testing.T) {
 	assert.NotNil(t, baseContext)
 	assert.Equal(t, context.Context, *baseContext)
 	assert.Equal(t, req, baseContext.request)
-	assert.Equal(t, res, baseContext.response)
+	assert.Equal(t, res, baseContext.response.Writer)
 	assert.Equal(t, params, baseContext.params)
 
 	assert.Panics(t, func() {
