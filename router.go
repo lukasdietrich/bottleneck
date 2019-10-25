@@ -91,11 +91,13 @@ func NewRouter(contextValue interface{}) *Router {
 	}
 }
 
-// Mount adds all roues of a Group to the Router.
-func (r *Router) Mount(g *Group) {
+// Mount adds all routes of a Group to the Router.
+func (r *Router) Mount(g *Group) *Router {
 	for _, route := range g.routes {
 		r.mux.Handle(route.method, route.path, makeMuxHandler(r, route))
 	}
+
+	return r
 }
 
 // ServeHTTP implements the http.Handler interface.
