@@ -5,7 +5,16 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"net/url"
+
+	"github.com/gorilla/schema"
+)
+
+const (
+	structTagQuery = "query"
+	structTagForm  = "form"
 )
 
 var (
@@ -29,16 +38,48 @@ type Binder interface {
 type defaultBinder struct{}
 
 func (defaultBinder) Bind(r *http.Request, v interface{}) error {
-	defer r.Body.Close()
+	if r.Body != nil {
+		defer r.Body.Close()
+	}
+
+	if r.Method == http.MethodGet {
+		return decodeValues(structTagQuery, r.URL.Query(), v)
+	}
 
 	switch contentType := r.Header.Get(HeaderContentType); contentType {
 	case MIMEApplicationJSON, MIMEApplicationJSONCharsetUTF8:
-		return json.NewDecoder(r.Body).Decode(v)
+		return decodeJSON(r.Body, v)
 
 	case MIMETextXML, MIMETextXMLCharsetUTF8, MIMEApplicationXML, MIMEApplicationXMLCharsetUTF8:
-		return xml.NewDecoder(r.Body).Decode(v)
+		return decodeXML(r.Body, v)
+
+	case MIMEApplicationForm:
+		if err := r.ParseForm(); err != nil {
+			return err
+		}
+
+		return decodeValues(structTagForm, r.Form, v)
 
 	default:
 		return fmt.Errorf("%w: %s", ErrBindUnsupportedContentType, contentType)
 	}
+}
+
+func decodeJSON(r io.Reader, v interface{}) error {
+	decoder := json.NewDecoder(r)
+	decoder.DisallowUnknownFields()
+	return decoder.Decode(v)
+}
+
+func decodeXML(r io.Reader, v interface{}) error {
+	decoder := xml.NewDecoder(r)
+	decoder.Strict = true
+	return decoder.Decode(v)
+}
+
+func decodeValues(structTag string, values url.Values, v interface{}) error {
+	decoder := schema.NewDecoder()
+	decoder.IgnoreUnknownKeys(false)
+	decoder.SetAliasTag(structTag)
+	return decoder.Decode(v, values)
 }

@@ -7,6 +7,7 @@ require (
 	github.com/dimfeld/httptreemux/v5 v5.0.2
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
+	github.com/gorilla/schema v1.1.0
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/spf13/afero v1.2.2

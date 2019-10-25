@@ -34,7 +34,7 @@ func TestBindJSON(t *testing.T) {
 		r := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(raw))
 		r.Header.Add(HeaderContentType, contentType)
 
-		assert.Nil(t, DefaultBinder.Bind(r, &actual))
+		assert.NoError(t, DefaultBinder.Bind(r, &actual))
 		assert.Equal(t, expected, actual)
 	}
 }
@@ -59,9 +59,39 @@ func TestBindXML(t *testing.T) {
 		r := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(raw))
 		r.Header.Add(HeaderContentType, contentType)
 
-		assert.Nil(t, DefaultBinder.Bind(r, &actual))
+		assert.NoError(t, DefaultBinder.Bind(r, &actual))
 		assert.Equal(t, expected, actual)
 	}
+}
+
+func TestBindForm(t *testing.T) {
+	var (
+		actual   bindTestStruct
+		expected = bindTestStruct{
+			Name: "Thomas",
+		}
+		raw = `name=Thomas`
+	)
+
+	r := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(raw))
+	r.Header.Add(HeaderContentType, MIMEApplicationForm)
+
+	assert.NoError(t, DefaultBinder.Bind(r, &actual))
+	assert.Equal(t, expected, actual)
+}
+
+func TestBindQuery(t *testing.T) {
+	var (
+		actual   bindTestStruct
+		expected = bindTestStruct{
+			Name: "Filip",
+		}
+	)
+
+	r := httptest.NewRequest(http.MethodGet, "/?name=Filip", nil)
+
+	assert.NoError(t, DefaultBinder.Bind(r, &actual))
+	assert.Equal(t, expected, actual)
 }
 
 func TestBindUnsupported(t *testing.T) {
