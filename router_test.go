@@ -81,7 +81,7 @@ func TestRouterServeWithMiddleware(t *testing.T) {
 	router.ServeHTTP(res, req)
 
 	buf := bytes.NewBuffer(nil)
-	buf.ReadFrom(res.Result().Body) // nolint:errcheck
+	buf.ReadFrom(res.Result().Body)
 
 	assert.Equal(t, 200, res.Code)
 	assert.Equal(t, MIMEApplicationJSONCharsetUTF8, res.Header().Get(HeaderContentType))
@@ -107,7 +107,7 @@ func TestRouterServeGenericError(t *testing.T) {
 	router.ServeHTTP(res, req)
 
 	buf := bytes.NewBuffer(nil)
-	buf.ReadFrom(res.Result().Body) // nolint:errcheck
+	buf.ReadFrom(res.Result().Body)
 
 	assert.Equal(t, 500, res.Code)
 	assert.Equal(t, MIMEApplicationJSONCharsetUTF8, res.Header().Get(HeaderContentType))
@@ -133,7 +133,7 @@ func TestRouterServeBottleneckError(t *testing.T) {
 	router.ServeHTTP(res, req)
 
 	buf := bytes.NewBuffer(nil)
-	buf.ReadFrom(res.Result().Body) // nolint:errcheck
+	buf.ReadFrom(res.Result().Body)
 
 	assert.Equal(t, 411, res.Code)
 	assert.Equal(t, MIMEApplicationJSONCharsetUTF8, res.Header().Get(HeaderContentType))

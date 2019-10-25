@@ -49,7 +49,7 @@ func TestContextRenderString(t *testing.T) {
 	assert.NoError(t, ctx.String(http.StatusTeapot, "Hello World"))
 
 	buf := bytes.NewBuffer(nil)
-	buf.ReadFrom(recorder.Result().Body) // nolint:errcheck
+	buf.ReadFrom(recorder.Result().Body)
 
 	assert.Equal(t, "Hello World", buf.String())
 }
@@ -67,7 +67,7 @@ func TestContextRenderJSON(t *testing.T) {
 	}))
 
 	buf := bytes.NewBuffer(nil)
-	buf.ReadFrom(recorder.Result().Body) // nolint:errcheck
+	buf.ReadFrom(recorder.Result().Body)
 
 	assert.Equal(t, http.StatusTeapot, recorder.Code)
 	assert.Equal(t, MIMEApplicationJSONCharsetUTF8, recorder.Header().Get(HeaderContentType))
@@ -87,7 +87,7 @@ func TestContextRenderXML(t *testing.T) {
 	}))
 
 	buf := bytes.NewBuffer(nil)
-	buf.ReadFrom(recorder.Result().Body) // nolint:errcheck
+	buf.ReadFrom(recorder.Result().Body)
 
 	assert.Equal(t, http.StatusUpgradeRequired, recorder.Code)
 	assert.Equal(t, MIMETextXMLCharsetUTF8, recorder.Header().Get(HeaderContentType))
@@ -105,7 +105,7 @@ func TestContextRenderStream(t *testing.T) {
 	assert.NoError(t, ctx.Stream(http.StatusTooManyRequests, MIMEOctetStream, strings.NewReader("Hello World")))
 
 	buf := bytes.NewBuffer(nil)
-	buf.ReadFrom(recorder.Result().Body) // nolint:errcheck
+	buf.ReadFrom(recorder.Result().Body)
 
 	assert.Equal(t, http.StatusTooManyRequests, recorder.Code)
 	assert.Equal(t, MIMEOctetStream, recorder.Header().Get(HeaderContentType))
