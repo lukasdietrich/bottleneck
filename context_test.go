@@ -46,7 +46,7 @@ func TestContextRenderString(t *testing.T) {
 
 	ctx.init(recorder, nil, nil)
 
-	assert.Nil(t, ctx.String(http.StatusTeapot, "Hello World"))
+	assert.NoError(t, ctx.String(http.StatusTeapot, "Hello World"))
 
 	buf := bytes.NewBuffer(nil)
 	buf.ReadFrom(recorder.Result().Body) // nolint:errcheck
@@ -62,7 +62,7 @@ func TestContextRenderJSON(t *testing.T) {
 
 	ctx.init(recorder, nil, nil)
 
-	assert.Nil(t, ctx.JSON(http.StatusTeapot, bindTestStruct{
+	assert.NoError(t, ctx.JSON(http.StatusTeapot, bindTestStruct{
 		Name: "Joe",
 	}))
 
@@ -82,7 +82,7 @@ func TestContextRenderXML(t *testing.T) {
 
 	ctx.init(recorder, nil, nil)
 
-	assert.Nil(t, ctx.XML(http.StatusUpgradeRequired, bindTestStruct{
+	assert.NoError(t, ctx.XML(http.StatusUpgradeRequired, bindTestStruct{
 		Name: "Jake",
 	}))
 
@@ -102,7 +102,7 @@ func TestContextRenderStream(t *testing.T) {
 
 	ctx.init(recorder, nil, nil)
 
-	assert.Nil(t, ctx.Stream(http.StatusTooManyRequests, MIMEOctetStream, strings.NewReader("Hello World")))
+	assert.NoError(t, ctx.Stream(http.StatusTooManyRequests, MIMEOctetStream, strings.NewReader("Hello World")))
 
 	buf := bytes.NewBuffer(nil)
 	buf.ReadFrom(recorder.Result().Body) // nolint:errcheck

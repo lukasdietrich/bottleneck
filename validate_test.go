@@ -17,7 +17,7 @@ func TestDefaultValidatorValid(t *testing.T) {
 		Age:  35,
 	}
 
-	assert.Nil(t, DefaultValidator.Validate(nil, &validStruct))
+	assert.NoError(t, DefaultValidator.Validate(nil, &validStruct))
 }
 
 func TestDefaultValidatorInvalid(t *testing.T) {

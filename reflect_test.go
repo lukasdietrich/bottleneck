@@ -63,8 +63,8 @@ func TestContextCreatorValidate(t *testing.T) {
 	creator := newContextCreator(reflectTestContext{})
 	assert.NotNil(t, creator)
 
-	assert.Nil(t, creator.validateTarget(reflect.TypeOf(&reflectTestContext{})))
-	assert.Nil(t, creator.validateTarget(reflect.TypeOf(&Context{})))
+	assert.NoError(t, creator.validateTarget(reflect.TypeOf(&reflectTestContext{})))
+	assert.NoError(t, creator.validateTarget(reflect.TypeOf(&Context{})))
 	assert.Error(t, creator.validateTarget(reflect.TypeOf(0)))
 }
 
@@ -78,7 +78,7 @@ func TestValidateHandlerPass(t *testing.T) {
 		func(*Context) error { return nil },
 		func(*reflectTestContext) error { return nil },
 	} {
-		assert.Nil(t, validateHandler(creator, reflect.TypeOf(fn)))
+		assert.NoError(t, validateHandler(creator, reflect.TypeOf(fn)))
 	}
 }
 
@@ -121,7 +121,7 @@ func TestValidateMiddlewarePass(t *testing.T) {
 		func(*Context, Next) error { return nil },
 		func(*reflectTestContext, Next) error { return nil },
 	} {
-		assert.Nil(t, validateMiddleware(creator, reflect.TypeOf(fn)))
+		assert.NoError(t, validateMiddleware(creator, reflect.TypeOf(fn)))
 	}
 }
 
